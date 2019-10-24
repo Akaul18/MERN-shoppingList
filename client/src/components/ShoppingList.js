@@ -2,18 +2,16 @@ import React, { Component } from 'react';
 import { Container, ListGroup, ListGroupItem, Button } from 'reactstrap';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import uuid from 'uuid';
+import { connect } from 'react-redux'; // it allows us to basically get the state from redux to react component
+import { getItems } from '../actions/itemActions';
+import PropTypes from 'prop-types';//if you have component properties we should put them in proptypes(its kind of validation)
 
 class ShoppingList extends Component {
-    
-    state={
-        items : [
-            { id: uuid(), name: "Milk"},
-            { id: uuid(), name: "Eggs"},
-            { id: uuid(), name: "Water"},
-            { id: uuid(), name: "Chicken"}
-        ]
-    }
 
+   componentDidMount() {
+        this.props.getItems();
+   } //use it when you call an action or making an api request
+   
     addItem = () => {
         const name = prompt('Enter Item');
         if(name){
@@ -31,7 +29,7 @@ class ShoppingList extends Component {
       }
 
     render() {
-        const {items} = this.state;
+        const {items} = this.props.allItems;
         // console.log(items);
         return (
             <Container>
@@ -70,5 +68,17 @@ class ShoppingList extends Component {
     }
 }
 
+ShoppingList.propTypes = {
+     getItems: PropTypes.func.isRequired,
+     allItems: PropTypes.object.isRequired
+};//setting proptypes
 
-export default ShoppingList
+const mapStateToProps = state => ({
+
+    allItems: state.allitems // we are matching a redux state to a component prop and we named it item because we named it that in our root reducer
+
+}); //will map the state of item to a component property(eg to use it like this.props.items) 
+//for only one param we dont need a round bracket 
+
+
+export default connect(mapStateToProps, { getItems })(ShoppingList); //takes in 2 params: mapStateToProps and any action that we may use in this component
