@@ -1,6 +1,6 @@
 // A reducer is basically where our actual state is going to go
 import uuid from 'uuid';
-import { GET_ITEMS, ADD_ITEM, DEL_ITEMS } from '../actions/types';
+import { GET_ITEMS, ADD_ITEM, DEL_ITEM } from '../actions/types';
 
 const initialState = {
     items : [
@@ -17,6 +17,19 @@ export default (state = initialState, action) => {
         case GET_ITEMS:
             return {
                 ...state //will return the initial state when action is of type GET_ITEMS
+            }
+
+        case DEL_ITEM:
+            return {
+                ...state,
+                items:state.items.filter(item => item.id !== action.extraData)
+
+            }
+
+        case ADD_ITEM:
+            return {
+                ...state,
+                items: [action.extraData, ...state.items]
             }
         default:
             return state;

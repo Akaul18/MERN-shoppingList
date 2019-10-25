@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Container, ListGroup, ListGroupItem, Button } from 'reactstrap';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import uuid from 'uuid';
+// import uuid from 'uuid';
 import { connect } from 'react-redux'; // it allows us to basically get the state from redux to react component
-import { getItems } from '../actions/itemActions';
+import { getItems, deleteItem, addItem } from '../actions/itemActions';
 import PropTypes from 'prop-types';//if you have component properties we should put them in proptypes(its kind of validation)
 
 class ShoppingList extends Component {
@@ -11,37 +11,16 @@ class ShoppingList extends Component {
    componentDidMount() {
         this.props.getItems();
    } //use it when you call an action or making an api request
-   
-    addItem = () => {
-        const name = prompt('Enter Item');
-        if(name){
-          this.setState(state => ({
-            items: [...state.items, { id:uuid(), name }]
-          }));
-        }
-      }
 
-      deleteBtn = (id) => {
-        //   console.log(id);
-          this.setState({
-            items: [...this.state.items.filter(item => item.id !== id)]
-          });
-      }
+    deleteBtn = id => {
+        this.props.deleteItem(id);  
+    }
 
     render() {
         const {items} = this.props.allItems;
         // console.log(items);
         return (
             <Container>
-                <Button 
-                color="dark"
-                style={{marginBottom:'2rem'}}
-                onClick={this.addItem}>
-                
-                Add item
-                
-                </Button>
-
                 <ListGroup>
                     <TransitionGroup className="shopping-list">
                         { items.map(({id, name}) => (
@@ -62,15 +41,15 @@ class ShoppingList extends Component {
                         ))}
                     </TransitionGroup>
                 </ListGroup>
-
             </Container>
         )
     }
 }
 
 ShoppingList.propTypes = {
-     getItems: PropTypes.func.isRequired,
-     allItems: PropTypes.object.isRequired
+    allItems: PropTypes.object.isRequired,
+    getItems: PropTypes.func.isRequired,
+    deleteItem: PropTypes.func.isRequired
 };//setting proptypes
 
 const mapStateToProps = state => ({
@@ -81,4 +60,4 @@ const mapStateToProps = state => ({
 //for only one param we dont need a round bracket 
 
 
-export default connect(mapStateToProps, { getItems })(ShoppingList); //takes in 2 params: mapStateToProps and any action that we may use in this component
+export default connect(mapStateToProps, { getItems, deleteItem })(ShoppingList); //takes in 2 params: mapStateToProps and any action that we may use in this component
