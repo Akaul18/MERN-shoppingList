@@ -1,14 +1,10 @@
 // A reducer is basically where our actual state is going to go
 import uuid from 'uuid';
-import { GET_ITEMS, ADD_ITEM, DEL_ITEM } from '../actions/types';
+import { GET_ITEMS, ADD_ITEM, DEL_ITEM, ITEMS_LOADING } from '../actions/types';
 
 const initialState = {
-    items : [
-        { id: uuid(), name: "Milk"},
-        { id: uuid(), name: "Eggs"},
-        { id: uuid(), name: "Flowers"},
-        { id: uuid(), name: "Chicken"}
-    ] // actually this data will come from the database
+    items : [], // actually this data will come from the database
+    loading: false
 };
 
 export default (state = initialState, action) => {
@@ -16,20 +12,27 @@ export default (state = initialState, action) => {
     switch(action.type){
         case GET_ITEMS:
             return {
-                ...state //will return the initial state when action is of type GET_ITEMS
+                ...state, //will return the initial state when action is of type GET_ITEMS
+                items: action.extraData,
+                loading: false
             }
 
         case DEL_ITEM:
             return {
                 ...state,
-                items:state.items.filter(item => item.id !== action.extraData)
-
+                items:state.items.filter(item => item._id !== action.extraData)
             }
 
         case ADD_ITEM:
             return {
                 ...state,
                 items: [action.extraData, ...state.items]
+            }
+
+        case ITEMS_LOADING:
+            return {
+                ...state,
+                loading: true
             }
         default:
             return state;
